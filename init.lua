@@ -190,6 +190,22 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Custom keymaps
+vim.keymap.set('i', 'kj', '<Esc>', { noremap = true })
+vim.keymap.set('i', 'KJ', '<Esc>', { noremap = true })
+vim.keymap.set('i', 'Kj', '<Esc>', { noremap = true })
+vim.keymap.set('i', 'kJ', '<Esc>', { noremap = true })
+vim.keymap.set('v', 'kj', '<Esc>', { noremap = true })
+vim.keymap.set('v', 'KJ', '<Esc>', { noremap = true })
+vim.keymap.set('v', 'Kj', '<Esc>', { noremap = true })
+vim.keymap.set('v', 'kJ', '<Esc>', { noremap = true })
+vim.keymap.set('t', 'kj', '<C-\\><C-n>', { noremap = true })
+vim.keymap.set('t', 'KJ', '<C-\\><C-n>', { noremap = true })
+vim.keymap.set('t', 'Kj', '<C-\\><C-n>', { noremap = true })
+vim.keymap.set('t', 'kJ', '<C-\\><C-n>', { noremap = true })
+vim.keymap.set('n', '<C-\\>', ':Neotree toggle<CR>', { desc = 'Toggle [N]eotree' })
+vim.keymap.set('n', '\\', ':ToggleTerm<CR>', { desc = 'Toggle [T]erminal' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -566,7 +582,6 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -577,7 +592,9 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
         --
-
+        pyright = {},
+        quick_lint_js = {},
+        gopls = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -652,12 +669,12 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        go = { 'goimports', 'gofmt' },
+        javascript = { 'biome' },
+        typescript = { 'biome' },
+        python = { 'ruff_format' },
+        html = { 'prettierd' },
+        make = { 'makefmt' },
       },
     },
   },
@@ -791,8 +808,18 @@ require('lazy').setup({
     end,
   },
 
-  -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  -- -- Highlight todo, notes, etc in comments
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {
+      signs = false,
+      keywords = {
+        SECTION = { icon = ' ', color = 'info' },
+      },
+    },
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -874,18 +901,21 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
+  require 'custom.plugins.toggleterm',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
+  --
+  -- { 'akinsho/toggleterm.nvim', version = '*', config = true },
+  { 'github/copilot.vim' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -910,3 +940,9 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+--
+vim.opt.guicursor = 'i-ci-ve:hor30'
+vim.opt.relativenumber = true
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true

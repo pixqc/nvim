@@ -10,16 +10,16 @@ return {
     'MunifTanjim/nui.nvim',
   },
   cmd = 'Neotree',
-  keys = {
-    { '\\', ':Neotree reveal<CR>', { desc = 'NeoTree reveal' } },
-  },
-  opts = {
-    filesystem = {
-      window = {
-        mappings = {
-          ['\\'] = 'close_window',
-        },
-      },
-    },
-  },
+  -- keys = {
+  --   { '<C-\\>', ':Neotree<CR>', { desc = 'NeoTree toggle' } },
+  -- },
+  -- opts = {
+  --   filesystem = {
+  --     window = {
+  --       mappings = {
+  --         ['<C-\\>'] = 'close_window',
+  --       },
+  --     },
+  --   },
+  -- },
 }
