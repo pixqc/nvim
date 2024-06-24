@@ -590,10 +590,10 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
+        tsserver = {},
+        zls = {},
         pyright = {},
-        quick_lint_js = {},
+        -- quick_lint_js = {},
         gopls = {},
         lua_ls = {
           -- cmd = {...},
@@ -675,6 +675,9 @@ require('lazy').setup({
         python = { 'ruff_format' },
         html = { 'prettierd' },
         make = { 'makefmt' },
+        css = { 'prettierd' },
+        zig = { 'zigfmt' },
+        json = { 'prettierd' },
       },
     },
   },
@@ -890,6 +893,82 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
+  {
+    'pixqc/llm.nvim',
+    dependencies = { 'nvim-neotest/nvim-nio' },
+    config = function()
+      local llm = require 'llm'
+      llm.setup {
+        system_prompt = 'be brief, get to the point; when outputting code, i dont want explanation, just write the code.',
+        timeout_ms = 2500,
+        services = {
+          anthropic = {
+            url = 'https://api.anthropic.com/v1/messages',
+            model = 'claude-3-5-sonnet-20240620',
+            api_key_name = 'ANTHROPIC_API_KEY',
+          },
+          groq_l3_70b = {
+            url = 'https://api.groq.com/openai/v1/chat/completions',
+            model = 'llama3-70b-8192',
+            api_key_name = 'GROQ_API_KEY',
+          },
+          groq_l3_8b = {
+            url = 'https://api.groq.com/openai/v1/chat/completions',
+            model = 'llama3-8b-8192',
+            api_key_name = 'GROQ_API_KEY',
+          },
+          groq_mixtral = {
+            url = 'https://api.groq.com/openai/v1/chat/completions',
+            model = 'mixtral-8x7b-32768',
+            api_key_name = 'GROQ_API_KEY',
+          },
+        },
+      }
+      local function set_keymap(mode, key, fn, desc)
+        vim.keymap.set(mode, '<leader>l' .. key, fn, { desc = desc })
+      end
+
+      -- set_keymap('n', 'h', function()
+      --   llm.prompt { replace = false, service = 'anthropic' }
+      -- end, 'LLM Prompt (Anthropic)')
+      -- set_keymap('v', 'h', function()
+      --   llm.prompt { replace = false, service = 'anthropic' }
+      -- end, 'LLM Prompt (Anthropic) - Visual')
+      -- set_keymap('v', 'H', function()
+      --   llm.prompt { replace = true, service = 'anthropic' }
+      -- end, 'LLM Replace (Anthropic) - Visual')
+
+      set_keymap('n', 'l', function()
+        llm.prompt { replace = false, service = 'groq_l3_8b' }
+      end, 'LLM Prompt (Groq Llama3)')
+      set_keymap('v', 'l', function()
+        llm.prompt { replace = false, service = 'groq_l3_8b' }
+      end, 'LLM Prompt (Groq Llama3) - Visual')
+      set_keymap('v', 'L', function()
+        llm.prompt { replace = true, service = 'groq_l3_8b' }
+      end, 'LLM Replace (Groq Llama3) - Visual')
+
+      set_keymap('n', 'k', function()
+        llm.prompt { replace = false, service = 'groq_l3_70b' }
+      end, 'LLM Prompt (Groq Llama3-70b)')
+      set_keymap('v', 'k', function()
+        llm.prompt { replace = false, service = 'groq_l3_70b' }
+      end, 'LLM Prompt (Groq Llama3-70b) - Visual')
+      set_keymap('v', 'K', function()
+        llm.prompt { replace = true, service = 'groq_l3_70b' }
+      end, 'LLM Replace (Groq Llama3-70b) - Visual')
+
+      set_keymap('n', 'j', function()
+        llm.prompt { replace = false, service = 'groq_mixtral' }
+      end, 'LLM Prompt (Groq Mixtral)')
+      set_keymap('v', 'j', function()
+        llm.prompt { replace = false, service = 'groq_mixtral' }
+      end, 'LLM Prompt (Groq Mixtral) - Visual')
+      set_keymap('v', 'J', function()
+        llm.prompt { replace = true, service = 'groq_mixtral' }
+      end, 'LLM Replace (Groq Mixtral) - Visual')
+    end,
+  },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -946,3 +1025,4 @@ vim.opt.relativenumber = true
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
+vim.opt.colorcolumn = '79'
