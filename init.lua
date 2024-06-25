@@ -897,33 +897,7 @@ require('lazy').setup({
     'pixqc/llm.nvim',
     dependencies = { 'nvim-neotest/nvim-nio' },
     config = function()
-      local llm = require 'llm'
-      llm.setup {
-        system_prompt = 'be brief, get to the point; when outputting code, i dont want explanation, just write the code.',
-        timeout_ms = 2500,
-        services = {
-          anthropic = {
-            url = 'https://api.anthropic.com/v1/messages',
-            model = 'claude-3-5-sonnet-20240620',
-            api_key_name = 'ANTHROPIC_API_KEY',
-          },
-          groq_l3_70b = {
-            url = 'https://api.groq.com/openai/v1/chat/completions',
-            model = 'llama3-70b-8192',
-            api_key_name = 'GROQ_API_KEY',
-          },
-          groq_l3_8b = {
-            url = 'https://api.groq.com/openai/v1/chat/completions',
-            model = 'llama3-8b-8192',
-            api_key_name = 'GROQ_API_KEY',
-          },
-          groq_mixtral = {
-            url = 'https://api.groq.com/openai/v1/chat/completions',
-            model = 'mixtral-8x7b-32768',
-            api_key_name = 'GROQ_API_KEY',
-          },
-        },
-      }
+      local llm = require 'custom.plugins.llm'
       local function set_keymap(mode, key, fn, desc)
         vim.keymap.set(mode, '<leader>l' .. key, fn, { desc = desc })
       end
