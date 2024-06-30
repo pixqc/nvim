@@ -898,6 +898,10 @@ require('lazy').setup({
     dependencies = { 'nvim-neotest/nvim-nio' },
     config = function()
       local llm = require 'custom.plugins.llm'
+      llm.setup {
+        system_prompt = 'be brief, get to the point; when outputting code, i dont want explanation, just write the code.',
+        timeout_ms = 2500,
+      }
       local function set_keymap(mode, key, fn, desc)
         vim.keymap.set(mode, '<leader>l' .. key, fn, { desc = desc })
       end
