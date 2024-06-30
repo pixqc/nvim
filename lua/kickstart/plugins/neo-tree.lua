@@ -10,16 +10,4 @@ return {
     'MunifTanjim/nui.nvim',
   },
   cmd = 'Neotree',
-  -- keys = {
-  --   { '<C-\\>', ':Neotree<CR>', { desc = 'NeoTree toggle' } },
-  -- },
-  -- opts = {
-  --   filesystem = {
-  --     window = {
-  --       mappings = {
-  --         ['<C-\\>'] = 'close_window',
-  --       },
-  --     },
-  --   },
-  -- },
 }
