@@ -591,6 +591,7 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {},
+        denols = {},
         zls = {},
         pyright = {},
         clangd = {},
@@ -965,7 +966,7 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'custom.plugins.toggleterm',
-  require 'custom.plugins.llm-new',
+  require 'custom.plugins.llm',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
