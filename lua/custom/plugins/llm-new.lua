@@ -4,46 +4,60 @@ return {
   config = function()
     local nio = require 'nio'
     local llm_config = {
-      -- 'llama-3.1-8b-instant' 'llama-3.1-70b-versatile' 'llama-3.1-405b-reasoning'
       model = 'groq_l3_70b',
       api_key = os.getenv 'GROQ_API_KEY',
       base_url = 'https://api.groq.com/openai/v1/chat/completions',
       system_prompt = 'be brief, get to the point; when outputting code, i dont want explanation, just write the code.',
       timeout_ms = 1000,
-      user_prompt = '',
       temperature = 0.7,
       replace = false,
     }
 
-    -- local function get_visual_selection()
-    --   local _, srow, scol, _ = unpack(vim.fn.getpos "'<")
-    --   local _, erow, ecol, _ = unpack(vim.fn.getpos "'>")
-    --   local lines = vim.api.nvim_buf_get_lines(0, srow - 1, erow, false)
-    --
-    --   if #lines == 1 then
-    --     lines[1] = string.sub(lines[1], scol, ecol)
-    --   else
-    --     lines[1] = string.sub(lines[1], scol)
-    --     lines[#lines] = string.sub(lines[#lines], 1, ecol)
-    --   end
-    --
-    --   return table.concat(lines, '\n')
-    -- end
-    --
-    -- local function get_lines_until_cursor()
-    --   local cursor = vim.api.nvim_win_get_cursor(0)
-    --   local lines = vim.api.nvim_buf_get_lines(0, 0, cursor[1], false)
-    --   lines[#lines] = string.sub(lines[#lines], 1, cursor[2])
-    --   return table.concat(lines, '\n')
-    -- end
-    --
-    -- local function get_prompt_text()
-    --   if vim.fn.mode() == 'v' or vim.fn.mode() == 'V' then
-    --     return get_visual_selection(), true
-    --   else
-    --     return get_lines_until_cursor(), false
-    --   end
-    -- end
+    local function get_visual_selection()
+      local _, srow, scol = unpack(vim.fn.getpos "'<")
+      local _, erow, ecol = unpack(vim.fn.getpos "'>")
+
+      if vim.fn.mode() == 'V' then
+        if srow > erow then
+          return vim.api.nvim_buf_get_lines(0, erow - 1, srow, true)
+        else
+          return vim.api.nvim_buf_get_lines(0, srow - 1, erow, true)
+        end
+      end
+
+      if vim.fn.mode() == 'v' then
+        if srow < erow or (srow == erow and scol <= ecol) then
+          return vim.api.nvim_buf_get_text(0, srow - 1, scol - 1, erow - 1, ecol, {})
+        else
+          return vim.api.nvim_buf_get_text(0, erow - 1, ecol - 1, srow - 1, scol, {})
+        end
+      end
+
+      if vim.fn.mode() == '\22' then
+        local lines = {}
+        if srow > erow then
+          srow, erow = erow, srow
+        end
+        if scol > ecol then
+          scol, ecol = ecol, scol
+        end
+        for i = srow, erow do
+          table.insert(lines, vim.api.nvim_buf_get_text(0, i - 1, math.min(scol - 1, ecol), i - 1, math.max(scol - 1, ecol), {})[1])
+        end
+        return lines
+      end
+    end
+
+    local function get_lines_until_cursor()
+      local current_buffer = vim.api.nvim_get_current_buf()
+      local current_window = vim.api.nvim_get_current_win()
+      local cursor_position = vim.api.nvim_win_get_cursor(current_window)
+      local row = cursor_position[1]
+
+      local lines = vim.api.nvim_buf_get_lines(current_buffer, 0, row, true)
+
+      return table.concat(lines, '\n')
+    end
 
     local function process_stream(response_text)
       local lines = vim.split(response_text, '\n')
@@ -79,11 +93,25 @@ return {
 
     local function prompt(opts)
       local config = vim.tbl_extend('force', llm_config, opts)
-      print(config.model)
+
+      local user_prompt = ''
+      local visual_lines = get_visual_selection()
+      if visual_lines then
+        user_prompt = table.concat(visual_lines, '\n')
+        if config.replace then
+          vim.api.nvim_command 'normal! d'
+          vim.api.nvim_command 'normal! k'
+        else
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', false, true, true), 'nx', false)
+        end
+      else
+        user_prompt = get_lines_until_cursor()
+      end
+
       local data = {
         messages = {
           { role = 'system', content = config.system_prompt },
-          { role = 'user', content = config.user_prompt },
+          { role = 'user', content = user_prompt },
         },
         model = config.model,
         temperature = config.temperature,
