@@ -590,8 +590,13 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {},
-        denols = {},
+        denols = {
+          root_dir = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc'),
+        },
+        tsserver = {
+          root_dir = require('lspconfig.util').root_pattern 'package.json',
+          single_file_support = false,
+        },
         zls = {},
         pyright = {},
         clangd = {},
@@ -1008,3 +1013,7 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.colorcolumn = '79'
+-- deno lsp
+vim.g.markdown_fenced_languages = {
+  'ts=typescript',
+}
