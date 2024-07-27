@@ -8,7 +8,7 @@ return {
       api_key = os.getenv 'GROQ_API_KEY',
       base_url = 'https://api.groq.com/openai/v1/chat/completions',
       system_prompt = 'be brief, get to the point; when outputting code, i dont want explanation, just write the code.',
-      timeout_sec = 1,
+      timeout_ms = 1000,
       temperature = 0.7,
       replace = false,
     }
@@ -75,9 +75,23 @@ return {
     local function process_stream(response)
       local buffer = ''
       local has_tokens = false
-      local start_time = os.time()
+      local start_time = vim.uv.hrtime()
+
+      nio.run(function()
+        nio.sleep(llm_config.timeout_ms)
+        if not has_tokens then
+          response.stdout.close()
+          print 'llm.nvim has timed out!'
+        end
+      end)
 
       while true do
+        local current_time = vim.uv.hrtime()
+        local elapsed = (current_time - start_time) / 1000000
+        if elapsed >= llm_config.timeout_ms and not has_tokens then
+          return
+        end
+
         local chunk = response.stdout.read(1024)
         if chunk == nil then
           break
@@ -101,6 +115,7 @@ return {
               local content = data.choices[1].delta.content
               if content and content ~= vim.NIL then
                 has_tokens = true
+                nio.sleep(5)
                 vim.schedule(function()
                   vim.cmd 'undojoin'
                   write_string_at_cursor(content)
@@ -116,12 +131,6 @@ return {
               return
             end
           end
-        end
-
-        if not has_tokens and os.time() - start_time > llm_config.timeout_sec then
-          print 'llm.nvim has timed out!'
-          response.stdout.close()
-          return
         end
       end
     end
@@ -174,7 +183,7 @@ return {
           cmd = 'curl',
           args = args,
         }
-        vim.api.nvim_command 'normal! o'
+        nio.api.nvim_command 'normal! o'
         process_stream(response)
         vim.schedule(function()
           vim.api.nvim_echo({ { '', 'Normal' } }, false, {})
