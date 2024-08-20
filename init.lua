@@ -686,6 +686,7 @@ require('lazy').setup({
         json = { 'prettierd' },
         c = { 'clang-format' },
         cpp = { 'clang-format' },
+        markdown = { 'prettierd' },
       },
     },
   },
@@ -901,61 +902,6 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
-  -- {
-  --   'pixqc/llm.nvim',
-  --   dependencies = { 'nvim-neotest/nvim-nio' },
-  --   config = function()
-  --     local llm = require 'custom.plugins.llm'
-  --     llm.setup {
-  --       system_prompt = 'be brief, get to the point; when outputting code, i dont want explanation, just write the code.',
-  --       timeout_ms = 2500,
-  --     }
-  --     local function set_keymap(mode, key, fn, desc)
-  --       vim.keymap.set(mode, '<leader>l' .. key, fn, { desc = desc })
-  --     end
-  --
-  --     -- set_keymap('n', 'h', function()
-  --     --   llm.prompt { replace = false, service = 'anthropic' }
-  --     -- end, 'LLM Prompt (Anthropic)')
-  --     -- set_keymap('v', 'h', function()
-  --     --   llm.prompt { replace = false, service = 'anthropic' }
-  --     -- end, 'LLM Prompt (Anthropic) - Visual')
-  --     -- set_keymap('v', 'H', function()
-  --     --   llm.prompt { replace = true, service = 'anthropic' }
-  --     -- end, 'LLM Replace (Anthropic) - Visual')
-  --
-  --     set_keymap('n', 'l', function()
-  --       llm.prompt { replace = false, service = 'groq_l3_8b' }
-  --     end, 'LLM Prompt (Groq Llama3)')
-  --     set_keymap('v', 'l', function()
-  --       llm.prompt { replace = false, service = 'groq_l3_8b' }
-  --     end, 'LLM Prompt (Groq Llama3) - Visual')
-  --     set_keymap('v', 'L', function()
-  --       llm.prompt { replace = true, service = 'groq_l3_8b' }
-  --     end, 'LLM Replace (Groq Llama3) - Visual')
-  --
-  --     set_keymap('n', 'k', function()
-  --       llm.prompt { replace = false, service = 'groq_l3_70b' }
-  --     end, 'LLM Prompt (Groq Llama3-70b)')
-  --     set_keymap('v', 'k', function()
-  --       llm.prompt { replace = false, service = 'groq_l3_70b' }
-  --     end, 'LLM Prompt (Groq Llama3-70b) - Visual')
-  --     set_keymap('v', 'K', function()
-  --       llm.prompt { replace = true, service = 'groq_l3_70b' }
-  --     end, 'LLM Replace (Groq Llama3-70b) - Visual')
-  --
-  --     set_keymap('n', 'j', function()
-  --       llm.prompt { replace = false, service = 'groq_l3_405b' }
-  --     end, 'LLM Prompt (Groq Mixtral)')
-  --     set_keymap('v', 'j', function()
-  --       llm.prompt { replace = false, service = 'groq_l3_405b' }
-  --     end, 'LLM Prompt (Groq Mixtral) - Visual')
-  --     set_keymap('v', 'J', function()
-  --       llm.prompt { replace = true, service = 'groq_l3_405b' }
-  --     end, 'LLM Replace (Groq Mixtral) - Visual')
-  --   end,
-  -- },
-
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -971,7 +917,8 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'custom.plugins.toggleterm',
-  require 'custom.plugins.llm',
+  -- require 'custom.plugins.llama',
+
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -979,8 +926,7 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
-  --
-  -- { 'akinsho/toggleterm.nvim', version = '*', config = true },
+
   { 'github/copilot.vim' },
 }, {
   ui = {
@@ -1006,7 +952,7 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
---
+
 vim.opt.guicursor = 'i-ci-ve:hor30'
 vim.opt.relativenumber = true
 vim.opt.tabstop = 2
