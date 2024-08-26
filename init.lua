@@ -590,13 +590,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        denols = {
-          root_dir = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc'),
-        },
-        tsserver = {
-          root_dir = require('lspconfig.util').root_pattern 'package.json',
-          single_file_support = false,
-        },
+        tsserver = {},
         zls = {},
         pyright = {},
         clangd = {},
@@ -678,6 +672,8 @@ require('lazy').setup({
         go = { 'goimports', 'gofmt' },
         javascript = { 'biome' },
         typescript = { 'biome' },
+        javascriptreact = { 'biome' },
+        typescriptreact = { 'biome' },
         python = { 'ruff_format' },
         html = { 'prettierd' },
         make = { 'makefmt' },
@@ -923,7 +919,6 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'custom.plugins.toggleterm',
-  -- require 'custom.plugins.llama',
 
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -963,7 +958,3 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.colorcolumn = '79'
--- deno lsp
-vim.g.markdown_fenced_languages = {
-  'ts=typescript',
-}
